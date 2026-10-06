@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Result{% endblock %}
+{% block content %}
+<main class="page">
+  <a class="back-link" href="{{ url_for('student.dashboard') }}">← Student Panel</a>
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">RESULT</p>
+      <h1>{{ submission.title }}</h1>
+      <p class="muted">Submitted on {{ submission.submitted_at.strftime('%d %b %Y, %I:%M %p') }}</p>
+    </div>
+    <div class="score-card">
+      {% if submission.percentage is not none %}
+        <strong>{{ "%.1f"|format(submission.percentage) }}%</strong>
+        <span>{{ submission.total_marks }} / {{ submission.maximum_marks }}</span>
+      {% else %}
+        <strong>Pending</strong>
+        <span>Teacher has not evaluated it yet.</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <section class="panel">
+    {% for a in answers %}
+    <article class="answer-card">
+      <div class="question-top">
+        <span class="badge">{{ a.question_type|upper }}</span>
+        <span class="marks">{% if a.marks is not none %}{{ a.marks }} / {% endif %}{{ a.maximum_marks }}</span>
+      </div>
+      <h3>{{ loop.index }}. {{ a.question_text }}</h3>
+      <div class="answer-block"><strong>Your answer</strong><p>{{ a.student_answer or 'No answer' }}</p></div>
+      {% if a.feedback %}
+      <div class="feedback-grid">
+        <div><strong>Feedback</strong><p>{{ a.feedback }}</p></div>
+        <div><strong>Strengths</strong><p>{{ a.strengths }}</p></div>
+        <div><strong>Improvements</strong><p>{{ a.improvements }}</p></div>
+      </div>
+      {% else %}
+        <p class="muted">Feedback will appear after the teacher runs evaluation.</p>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </section>
+</main>
+{% endblock %}

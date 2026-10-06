@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Edit Question{% endblock %}
+{% block content %}
+<main class="page narrow-page">
+  <a class="back-link" href="{{ url_for('teacher.manage_assessment', assessment_id=assessment.id) }}">← Back to Assessment Builder</a>
+  <section class="panel">
+    <p class="eyebrow">EDIT QUESTION</p>
+    <h1>Edit Question</h1>
+    <p class="muted">{{ assessment.title }}</p>
+
+    <form method="post">
+      <div class="field">
+        <label for="question_text">Question</label>
+        <textarea id="question_text" name="question_text" rows="5" required>{{ question.question_text }}</textarea>
+      </div>
+
+      <div class="field">
+        <label for="maximum_marks">Maximum marks</label>
+        <input id="maximum_marks" name="maximum_marks" type="number" min="1" value="{{ question.maximum_marks }}" required>
+      </div>
+
+      {% if question.question_type == 'mcq' %}
+      <div class="mcq-box">
+        <h3>MCQ options</h3>
+        {% for i in range(1,5) %}
+          {% set opt = options[i-1] if options|length >= i else None %}
+          <div class="option-row">
+            <input type="radio" name="correct_option" value="{{ i }}"
+              {% if opt and opt.is_correct %}checked{% endif %}>
+            <input name="option_{{ i }}" value="{{ opt.option_text if opt else '' }}" placeholder="Option {{ i }}">
+          </div>
+        {% endfor %}
+        <p class="hint">Select the radio button for the correct option.</p>
+      </div>
+      {% else %}
+      <div class="field">
+        <label for="expected_answer">Teacher's expected answer</label>
+        <textarea id="expected_answer" name="expected_answer" rows="6">{{ question.expected_answer or '' }}</textarea>
+      </div>
+      {% endif %}
+
+      <div class="form-actions">
+        <a class="btn btn-outline" href="{{ url_for('teacher.manage_assessment', assessment_id=assessment.id) }}">Cancel</a>
+        <button class="btn btn-primary" type="submit">Save Changes</button>
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}

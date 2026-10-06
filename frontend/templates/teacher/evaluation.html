@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}AI Evaluation{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>AI Evaluation</h1>
+    <p>View student submissions and evaluate them using AI.</p>
+</div>
+
+{% if submissions %}
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Assessment</th>
+                <th>Submitted</th>
+                <th>Status</th>
+                <th>Score</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for s in submissions %}
+
+            <tr>
+                <td>
+                    {{ s.student_name }}
+                </td>
+
+                <td>
+                    {{ s.assessment_title }}
+                </td>
+
+                <td>
+                    {{ s.submitted_at }}
+                </td>
+
+                <td>
+                    {{ s.evaluation_status or "Pending" }}
+                </td>
+
+                <td>
+                    {{ s.score_percentage or 0 }}%
+                </td>
+
+                <td>
+                    <a
+                        class="btn btn-small btn-primary"
+                        href="{{ url_for('evaluation.submission_detail', submission_id=s.id) }}">
+                        Open
+                    </a>
+                </td>
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+
+<div class="card">
+    <p>No submissions available for evaluation.</p>
+</div>
+
+{% endif %}
+
+{% endblock %}

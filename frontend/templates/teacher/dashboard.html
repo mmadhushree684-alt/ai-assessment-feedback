@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Teacher Panel{% endblock %}
+{% block content %}
+<main class="page">
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">TEACHER PANEL</p>
+      <h1>Welcome, {{ session.get('name') }}</h1>
+      <p class="muted">Create assessments, add questions, publish them and evaluate student submissions with AI.</p>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('teacher.create_assessment') }}">+ Create Assessment</a>
+  </div>
+
+  <section class="stat-grid">
+    <div class="stat-card"><strong>{{ assessments|length }}</strong><span>Assessments</span></div>
+    <div class="stat-card"><strong>{{ assessments|selectattr('status', 'equalto', 'published')|list|length }}</strong><span>Published</span></div>
+    <div class="stat-card"><strong>{{ assessments|sum(attribute='submission_count') }}</strong><span>Submissions</span></div>
+  </section>
+
+  <section class="assessment-grid quick-links"><article class="assessment-card"><h3>Manage Assessments</h3><p>Create, edit and publish assessments.</p><a class="btn btn-outline" href="{{ url_for('portal.teacher_assessments') }}">Open</a></article><article class="assessment-card"><h3>Students</h3><p>View registered students and submissions.</p><a class="btn btn-outline" href="{{ url_for('portal.teacher_students') }}">Open</a></article><article class="assessment-card"><h3>Reports & Evaluation</h3><p>Review results and AI evaluation.</p><a class="btn btn-outline" href="{{ url_for('portal.teacher_reports') }}">Open</a></article></section><section class="panel">
+    <div class="section-heading">
+      <h2>My Assessments</h2>
+      <a class="btn btn-outline" href="{{ url_for('teacher.create_assessment') }}">New assessment</a>
+    </div>
+
+    {% if assessments %}
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Title</th><th>Status</th><th>Questions</th><th>Submissions</th><th>Actions</th></tr></thead>
+          <tbody>
+          {% for a in assessments %}
+            <tr>
+              <td><strong>{{ a.title }}</strong><br><span class="muted small">{{ a.description or 'No description' }}</span></td>
+              <td><span class="badge badge-{{ a.status }}">{{ a.status|capitalize }}</span></td>
+              <td>{{ a.question_count }}</td>
+              <td>{{ a.submission_count }}</td>
+              <td class="actions">
+                <a class="btn btn-small btn-outline" href="{{ url_for('teacher.manage_assessment', assessment_id=a.id) }}">Manage</a>
+                <a class="btn btn-small btn-ghost" href="{{ url_for('teacher.submissions', assessment_id=a.id) }}">Submissions</a>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty">
+        <h3>No assessments yet</h3>
+        <p>Create your first assessment and add questions.</p>
+        <a class="btn btn-primary" href="{{ url_for('teacher.create_assessment') }}">Create Assessment</a>
+      </div>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}

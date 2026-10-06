@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}AI Powered Assessment and Feedback{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('home') }}">
+      <span class="brand-mark" aria-hidden="true">A+</span>
+      <span>AI Assessment &amp; Feedback</span>
+    </a>
+    <nav class="topnav">
+      {% if session.get('role') == 'teacher' %}
+        <a href="{{ url_for('teacher.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('portal.teacher_assessments') }}">Assessments</a>
+        <a href="{{ url_for('portal.teacher_all_submissions') }}">Submissions</a>
+        <a href="{{ url_for('portal.teacher_evaluation') }}">Evaluation</a>
+        <a href="{{ url_for('portal.teacher_students') }}">Students</a>
+        <a href="{{ url_for('portal.teacher_reports') }}">Reports</a>
+        <a href="{{ url_for('portal.teacher_notifications') }}">Notifications</a>
+      {% elif session.get('role') == 'student' %}
+        <a href="{{ url_for('student.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('portal.student_assessments') }}">Assessments</a>
+        <a href="{{ url_for('portal.student_results') }}">Results</a>
+        <a href="{{ url_for('portal.student_performance') }}">Performance</a>
+        <a href="{{ url_for('portal.student_notifications') }}">Notifications</a>
+      {% endif %}
+      {% if session.get('role') %}
+        <span class="who">{{ session.get('name') }}</span>
+        <form method="post" action="{{ url_for('auth.logout') }}">
+          <button class="btn btn-ghost" type="submit">Log out</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('auth.login', role='student') }}">Student log in</a>
+        <a href="{{ url_for('auth.login', role='teacher') }}">Teacher log in</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flashes">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}" role="status">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+  <script src="{{ url_for('static', filename='js/validation.js') }}"></script>
+</body>
+</html>

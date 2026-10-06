@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Submission Details
+    </title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #222;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #172554;
+        }
+
+        h2 {
+            color: #172554;
+            margin-top: 0;
+        }
+
+        h3 {
+            color: #1e3a8a;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(220px, 1fr)
+            );
+
+            gap: 15px;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .label {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .value {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .result-box {
+            background: #eef2ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .score {
+            font-size: 32px;
+            font-weight: bold;
+            color: #172554;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            background: #e2e8f0;
+        }
+
+        .question-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+
+        .question-number {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+
+        .answer-section {
+            margin-top: 14px;
+        }
+
+        .answer-title {
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .answer-content {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 7px;
+            white-space: pre-wrap;
+        }
+
+        .feedback {
+            background: #f0fdf4;
+            padding: 12px;
+            border-radius: 7px;
+        }
+
+        .strengths {
+            background: #eff6ff;
+            padding: 12px;
+            border-radius: 7px;
+        }
+
+        .improvements {
+            background: #fff7ed;
+            padding: 12px;
+            border-radius: 7px;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            border: none;
+            border-radius: 7px;
+            padding: 11px 18px;
+            font-size: 15px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #172554;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .ai-box {
+            background: #f8fafc;
+            border-left: 5px solid #1e3a8a;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 7px;
+        }
+
+        .warning {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 14px;
+            border-radius: 7px;
+            margin-top: 15px;
+        }
+
+        .flash {
+            padding: 13px;
+            border-radius: 7px;
+            margin-bottom: 15px;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                margin: 15px auto;
+            }
+
+            .card {
+                padding: 17px;
+            }
+
+            .question-text {
+                font-size: 16px;
+            }
+
+            .score {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- ================================================= -->
+    <!-- FLASH MESSAGES -->
+    <!-- ================================================= -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div class="flash">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- ================================================= -->
+    <!-- SUBMISSION INFORMATION -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h1>
+            Student Submission
+        </h1>
+
+        <div class="info-grid">
+
+            <div class="info-box">
+
+                <div class="label">
+                    Student
+                </div>
+
+                <div class="value">
+                    {{ submission.student_name }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="label">
+                    Username
+                </div>
+
+                <div class="value">
+                    {{ submission.student_username }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="label">
+                    Assessment
+                </div>
+
+                <div class="value">
+                    {{ submission.assessment_title }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="label">
+                    Status
+                </div>
+
+                <div class="value">
+
+                    <span class="status">
+                        {{ submission.evaluation_status or "Pending" }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- RESULT -->
+        <!-- ================================================= -->
+
+        {% if submission.evaluation_status == "evaluated" %}
+
+            <div class="result-box">
+
+                <div class="label">
+                    Current Result
+                </div>
+
+                <div class="score">
+                    {{ submission.percentage or 0 }}%
+                </div>
+
+                <p>
+                    <strong>
+                        {{ submission.total_marks or 0 }}
+                    </strong>
+
+                    /
+
+                    <strong>
+                        {{ submission.maximum_marks or 0 }}
+                    </strong>
+
+                    marks
+                </p>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- ================================================= -->
+        <!-- AI INFORMATION -->
+        <!-- ================================================= -->
+
+        <div class="ai-box">
+
+            <strong>
+                AI Evaluation Model
+            </strong>
+
+            <br>
+
+            {{ ai_model or "gemini-3.5-flash" }}
+
+            <br><br>
+
+            <small>
+                Written answers are evaluated using AI based on
+                correctness, relevance, key concepts, meaning,
+                completeness and missing information.
+            </small>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- RE-EVALUATE / EVALUATE BUTTON -->
+        <!-- ================================================= -->
+
+        <div class="button-row">
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'evaluation.evaluate',
+                    submission_id=submission.id
+                ) }}"
+            >
+
+                {% if submission.evaluation_status == "evaluated" %}
+
+                    <button
+                        class="btn btn-primary"
+                        type="submit"
+                        onclick="return confirm(
+                            'Re-evaluate this submission using AI? The current marks and feedback will be replaced.'
+                        );"
+                    >
+                        Re-evaluate with AI
+                    </button>
+
+                {% else %}
+
+                    <button
+                        class="btn btn-primary"
+                        type="submit"
+                    >
+                        Run AI Evaluation
+                    </button>
+
+                {% endif %}
+
+            </form>
+
+
+            <a
+                class="btn btn-secondary"
+                href="{{ url_for('portal.teacher_evaluation') }}"
+            >
+                Back to AI Evaluation
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- QUESTIONS AND ANSWERS -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>
+            Questions and AI Feedback
+        </h2>
+
+
+        {% for answer in answers %}
+
+            <div class="question-card">
+
+                <div class="question-number">
+                    Question {{ loop.index }}
+                </div>
+
+
+                <div class="question-text">
+                    {{ answer.question_text }}
+                </div>
+
+
+                <div>
+                    <strong>
+                        Type:
+                    </strong>
+
+                    {{ answer.question_type|upper }}
+
+                    &nbsp;&nbsp;
+
+                    <strong>
+                        Maximum Marks:
+                    </strong>
+
+                    {{ answer.maximum_marks }}
+                </div>
+
+
+                <!-- Student Answer -->
+
+                <div class="answer-section">
+
+                    <div class="answer-title">
+                        Student Answer
+                    </div>
+
+                    <div class="answer-content">
+
+                        {% if answer.student_answer %}
+
+                            {{ answer.student_answer }}
+
+                        {% else %}
+
+                            No answer provided.
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- Expected Answer -->
+
+                <div class="answer-section">
+
+                    <div class="answer-title">
+                        Expected Answer
+                    </div>
+
+                    <div class="answer-content">
+
+                        {% if answer.expected_answer %}
+
+                            {{ answer.expected_answer }}
+
+                        {% else %}
+
+                            Expected answer is not available.
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- Marks -->
+
+                {% if answer.marks is not none %}
+
+                    <div class="result-box">
+
+                        <strong>
+                            Marks:
+                        </strong>
+
+                        {{ answer.marks }}
+
+                        /
+
+                        {{ answer.maximum_marks }}
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- Feedback -->
+
+                {% if answer.feedback %}
+
+                    <div class="answer-section">
+
+                        <div class="answer-title">
+                            Feedback
+                        </div>
+
+                        <div class="feedback">
+                            {{ answer.feedback }}
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- Strengths -->
+
+                {% if answer.strengths %}
+
+                    <div class="answer-section">
+
+                        <div class="answer-title">
+                            Strengths
+                        </div>
+
+                        <div class="strengths">
+                            {{ answer.strengths }}
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- Improvements -->
+
+                {% if answer.improvements %}
+
+                    <div class="answer-section">
+
+                        <div class="answer-title">
+                            Areas for Improvement
+                        </div>
+
+                        <div class="improvements">
+                            {{ answer.improvements }}
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        {% else %}
+
+            <div class="warning">
+                No questions or answers were found.
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

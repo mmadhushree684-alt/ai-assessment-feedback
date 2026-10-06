@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}Student Panel{% endblock %}
+
+{% block content %}
+
+<main class="page">
+
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">STUDENT PANEL</p>
+      <h1>Welcome, {{ session.get('name') }}</h1>
+      <p class="muted">
+        Take published assessments and review your marks and AI feedback.
+      </p>
+    </div>
+  </div>
+
+  <!-- Quick Links -->
+
+  <section class="assessment-grid quick-links">
+
+
+<article class="assessment-card">
+  <h3>Assessments</h3>
+  <p>View and take published assessments.</p>
+  <a class="btn btn-outline"
+     href="{{ url_for('portal.student_assessments') }}">
+    Open
+  </a>
+</article>
+
+<article class="assessment-card">
+  <h3>Results</h3>
+  <p>View marks and AI feedback.</p>
+  <a class="btn btn-outline"
+     href="{{ url_for('portal.student_results') }}">
+    Open
+  </a>
+</article>
+
+<article class="assessment-card">
+  <h3>Performance</h3>
+  <p>See your assessment performance summary.</p>
+  <a class="btn btn-outline"
+     href="{{ url_for('portal.student_performance') }}">
+    Open
+  </a>
+</article>
+
+  </section>
+
+  <!-- Available Assessments -->
+
+  <section class="panel">
+
+<div class="section-heading">
+  <h2>Available Assessments</h2>
+</div>
+
+{% if assessments %}
+
+  <div class="assessment-grid">
+
+    {% for a in assessments %}
+
+      <article class="assessment-card">
+
+        {% if a.already_submitted %}
+          <span class="badge badge-success">
+            Already Submitted
+          </span>
+        {% else %}
+          <span class="badge badge-published">
+            Published
+          </span>
+        {% endif %}
+
+        <h3>{{ a.title }}</h3>
+
+        <p>
+          {{ a.description or 'No description provided.' }}
+        </p>
+
+        <p class="muted small">
+          Teacher: {{ a.teacher_name }} ·
+          {{ a.question_count }} questions
+        </p>
+
+
+        {% if a.already_submitted %}
+
+          <p class="muted small">
+            You have already submitted this assessment.
+          </p>
+
+          {% for s in submissions %}
+
+            {% if s.assessment_id == a.id %}
+
+              <a class="btn btn-outline"
+                 href="{{ url_for('student.result', submission_id=s.id) }}">
+                View Result
+              </a>
+
+            {% endif %}
+
+          {% endfor %}
+
+        {% else %}
+
+          <a class="btn btn-primary"
+             href="{{ url_for('student.take_assessment', assessment_id=a.id) }}">
+            Start Assessment
+          </a>
+
+        {% endif %}
+
+      </article>
+
+    {% endfor %}
+
+  </div>
+
+{% else %}
+
+  <div class="empty">
+    <h3>No published assessments</h3>
+    <p>
+      Your teacher has not published an assessment yet.
+    </p>
+  </div>
+
+{% endif %}
+
+  </section>
+
+  <!-- My Assessments -->
+
+  <section class="panel">
+
+<div class="section-heading">
+  <h2>My Assessments</h2>
+</div>
+
+{% if submissions %}
+
+  <div class="table-wrap">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Assessment</th>
+          <th>Submitted</th>
+          <th>Status</th>
+          <th>Score</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        {% for s in submissions %}
+
+          <tr>
+
+            <td>
+              <strong>{{ s.title }}</strong>
+            </td>
+
+            <td>
+              {{ s.submitted_at.strftime('%d %b %Y, %I:%M %p') }}
+            </td>
+
+            <td>
+              <span class="badge badge-{{ s.evaluation_status }}">
+                {{ s.evaluation_status|capitalize }}
+              </span>
+            </td>
+
+            <td>
+              {% if s.percentage is not none %}
+                {{ "%.1f"|format(s.percentage) }}%
+              {% else %}
+                —
+              {% endif %}
+            </td>
+
+            <td>
+              <a class="btn btn-small btn-outline"
+                 href="{{ url_for('student.result', submission_id=s.id) }}">
+                View
+              </a>
+            </td>
+
+          </tr>
+
+        {% endfor %}
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+{% else %}
+
+  <div class="empty">
+    <p>
+      You have not submitted an assessment yet.
+    </p>
+  </div>
+
+{% endif %}
+
+  </section>
+
+</main>
+
+{% endblock %}

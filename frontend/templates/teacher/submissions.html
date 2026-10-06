@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Submissions{% endblock %}
+{% block content %}
+<main class="page">
+  <a class="back-link" href="{{ url_for('teacher.dashboard') }}">← Teacher Panel</a>
+  <div class="page-heading">
+    <div><p class="eyebrow">SUBMISSIONS</p><h1>{{ assessment.title }}</h1></div>
+  </div>
+  <section class="panel">
+    {% if submissions %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Student</th><th>Submitted</th><th>Status</th><th>Score</th><th></th></tr></thead>
+        <tbody>
+        {% for s in submissions %}
+          <tr>
+            <td><strong>{{ s.student_name }}</strong><br><span class="muted small">{{ s.username }}</span></td>
+            <td>{{ s.submitted_at.strftime('%d %b %Y, %I:%M %p') }}</td>
+            <td><span class="badge badge-{{ s.evaluation_status }}">{{ s.evaluation_status|capitalize }}</span></td>
+            <td>{% if s.percentage is not none %}{{ "%.1f"|format(s.percentage) }}%{% else %}—{% endif %}</td>
+            <td><a class="btn btn-small btn-outline" href="{{ url_for('evaluation.submission_detail', submission_id=s.id) }}">Open</a></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <div class="empty"><h3>No student submissions</h3><p>Students will appear here after they submit this assessment.</p></div>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}

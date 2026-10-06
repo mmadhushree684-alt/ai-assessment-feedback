@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Create Assessment{% endblock %}
+{% block content %}
+<main class="page narrow-page">
+  <a class="back-link" href="{{ url_for('teacher.dashboard') }}">← Back to Teacher Panel</a>
+  <section class="panel">
+    <p class="eyebrow">NEW ASSESSMENT</p>
+    <h1>Create Assessment</h1>
+    <p class="muted">Start with a title and description. You can add questions on the next page.</p>
+    <form method="post" class="form-grid">
+      <div class="field full">
+        <label for="title">Assessment title</label>
+        <input id="title" name="title" value="{{ title }}" required placeholder="Example: Python Fundamentals">
+      </div>
+      <div class="field full">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="5" placeholder="Explain what students should know after this assessment.">{{ description }}</textarea>
+      </div>
+      <div class="form-actions full">
+        <a class="btn btn-outline" href="{{ url_for('teacher.dashboard') }}">Cancel</a>
+        <button class="btn btn-primary" type="submit">Create &amp; Add Questions</button>
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}

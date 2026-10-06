@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}{{ assessment.title }}{% endblock %}
+
+{% block content %}
+
+<main class="page narrow-page">
+
+  <a class="back-link" href="{{ url_for('student.dashboard') }}">
+    ← Student Panel
+  </a>
+
+  <section class="panel">
+
+```
+<p class="eyebrow">ASSESSMENT</p>
+
+<h1>{{ assessment.title }}</h1>
+
+<p class="muted">
+  {{ assessment.description or '' }}
+</p>
+
+<div class="assessment-warning">
+  <strong>Important:</strong>
+  Please check all your answers before submitting.
+  You can submit this assessment only once.
+</div>
+
+<form method="post">
+
+  {% for q in questions %}
+
+  <article class="student-question">
+
+    <div class="question-top">
+
+      <span class="badge">
+        {{ q.question_type|upper }}
+      </span>
+
+      <span class="marks">
+        {{ q.maximum_marks }} marks
+      </span>
+
+    </div>
+
+    <h3>
+      {{ loop.index }}. {{ q.question_text }}
+    </h3>
+
+
+    {% if q.question_type == 'mcq' %}
+
+      {% for option in q.options %}
+
+      <label class="radio-option">
+
+        <input
+          type="radio"
+          name="question_{{ q.id }}"
+          value="{{ option.option_text }}"
+          required
+        >
+
+        <span>
+          {{ option.option_text }}
+        </span>
+
+      </label>
+
+      {% endfor %}
+
+
+    {% else %}
+
+      <textarea
+        name="question_{{ q.id }}"
+        rows="{% if q.question_type == 'long' %}8{% elif q.question_type == 'sentence' %}4{% else %}5{% endif %}"
+        placeholder="Type your answer here..."
+        required
+      ></textarea>
+
+    {% endif %}
+
+  </article>
+
+  {% endfor %}
+
+
+  <div class="form-actions">
+
+    <button
+      class="btn btn-primary"
+      type="submit"
+      onclick="return confirm('Are you sure you want to submit this assessment? You will not be able to take this assessment again.')"
+    >
+      Submit Assessment
+    </button>
+
+  </div>
+
+</form>
+```
+
+  </section>
+
+</main>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ role|capitalize }} log in{% endblock %}
+{% block content %}
+<main class="auth-wrap">
+  <section class="auth-card auth-card-narrow">
+    <h1>{{ role|capitalize }} log in</h1>
+    <p class="muted">New here? <a href="{{ url_for('auth.register', role=role) }}">Create an account</a></p>
+
+    <form method="post">
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" autocomplete="username" required autofocus>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Log in</button>
+    </form>
+
+    <p class="switch-role">
+      {% if role == 'student' %}
+        Teacher? <a href="{{ url_for('auth.login', role='teacher') }}">Log in here</a>
+      {% else %}
+        Student? <a href="{{ url_for('auth.login', role='student') }}">Log in here</a>
+      {% endif %}
+    </p>
+  </section>
+</main>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Manage {{ assessment.title }}{% endblock %}
+{% block content %}
+<main class="page">
+  <div class="page-heading">
+    <div>
+      <a class="back-link" href="{{ url_for('teacher.dashboard') }}">← Teacher Panel</a>
+      <p class="eyebrow">ASSESSMENT BUILDER</p>
+      <h1>{{ assessment.title }}</h1>
+      <p class="muted">{{ assessment.description or 'No description' }}</p>
+    </div>
+    <div class="actions">
+      <span class="badge badge-{{ assessment.status }}">{{ assessment.status|capitalize }}</span>
+      <form method="post" action="{{ url_for('teacher.toggle_publish', assessment_id=assessment.id) }}">
+        <button class="btn {% if assessment.status == 'published' %}btn-outline{% else %}btn-primary{% endif %}" type="submit">
+          {% if assessment.status == 'published' %}Unpublish{% else %}Publish{% endif %}
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="builder-grid">
+    <section class="panel">
+      <div class="section-heading"><h2>Add Question</h2></div>
+      <form method="post" action="{{ url_for('teacher.add_question', assessment_id=assessment.id) }}">
+        <div class="field">
+          <label for="question_text">Question</label>
+          <textarea id="question_text" name="question_text" rows="4" required placeholder="Write the question for students"></textarea>
+        </div>
+
+        <div class="two-col">
+          <div class="field">
+            <label for="question_type">Question type</label>
+            <select id="question_type" name="question_type" onchange="toggleMcq(this.value)" required>
+              <option value="short">Short answer</option>
+              <option value="sentence">Sentence answer</option>
+              <option value="long">Long answer</option>
+              <option value="mcq">MCQ</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="maximum_marks">Maximum marks</label>
+            <input id="maximum_marks" name="maximum_marks" type="number" min="1" value="5" required>
+          </div>
+        </div>
+
+        <div id="expected-wrap" class="field">
+          <label for="expected_answer">Teacher's expected answer</label>
+          <textarea id="expected_answer" name="expected_answer" rows="5" placeholder="AI will compare the student's answer with this expected answer."></textarea>
+        </div>
+
+        <div id="mcq-wrap" class="mcq-box" hidden>
+          <h3>MCQ options</h3>
+          {% for i in range(1,5) %}
+          <div class="option-row">
+            <input type="radio" name="correct_option" value="{{ i }}" id="correct{{ i }}">
+            <input name="option_{{ i }}" placeholder="Option {{ i }}">
+          </div>
+          {% endfor %}
+          <p class="hint">Select the radio button for the correct option. At least two options are required.</p>
+        </div>
+
+        <button class="btn btn-primary btn-block" type="submit">Add Question</button>
+      </form>
+    </section>
+
+    <section>
+      <div class="section-heading"><h2>Questions ({{ questions|length }})</h2></div>
+      {% if questions %}
+        {% for q in questions %}
+        <article class="question-card">
+          <div class="question-top">
+            <span class="badge">{{ q.question_type|upper }}</span>
+            <span class="marks">{{ q.maximum_marks }} marks</span>
+          </div>
+          <h3>{{ loop.index }}. {{ q.question_text }}</h3>
+          {% if q.question_type == 'mcq' %}
+            <ul class="option-list">
+            {% for option in q.options %}
+              <li class="{% if option.is_correct %}correct-option{% endif %}">
+                {{ option.option_text }} {% if option.is_correct %}<strong>✓ Correct</strong>{% endif %}
+              </li>
+            {% endfor %}
+            </ul>
+          {% else %}
+            <div class="expected"><strong>Expected answer:</strong><br>{{ q.expected_answer or 'Not provided' }}</div>
+          {% endif %}
+          <div class="actions">
+            <a class="btn btn-small btn-outline" href="{{ url_for('teacher.edit_question', assessment_id=assessment.id, question_id=q.id) }}">Edit</a>
+            <form method="post" action="{{ url_for('teacher.delete_question', assessment_id=assessment.id, question_id=q.id) }}" onsubmit="return confirm('Delete this question?');">
+              <button class="btn btn-small btn-danger-outline" type="submit">Delete</button>
+            </form>
+          </div>
+        </article>
+        {% endfor %}
+      {% else %}
+        <div class="empty"><h3>No questions yet</h3><p>Add the first question using the form.</p></div>
+      {% endif %}
+    </section>
+  </div>
+</main>
+<script>
+function toggleMcq(value) {
+  const box = document.getElementById("mcq-wrap");
+  const expected = document.getElementById("expected-wrap");
+  const isMcq = value === "mcq";
+  box.hidden = !isMcq;
+  expected.hidden = isMcq;
+}
+toggleMcq(document.getElementById("question_type").value);
+</script>
+{% endblock %}

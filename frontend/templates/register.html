@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}{{ role|capitalize }} registration{% endblock %}
+{% block content %}
+<main class="auth-wrap">
+  <section class="auth-card">
+    <h1>Create {{ 'a teacher' if role == 'teacher' else 'a student' }} account</h1>
+    <p class="muted">Already registered? <a href="{{ url_for('auth.login', role=role) }}">Log in</a></p>
+
+    <form method="post" novalidate data-validate="register">
+      <div class="field">
+        <label for="name">{{ 'Teacher name' if role == 'teacher' else 'Full name' }}</label>
+        <input id="name" name="name" type="text" value="{{ form.get('name', '') }}" autocomplete="name" required>
+        <p class="error" data-error-for="name">{{ errors.get('name', '') }}</p>
+      </div>
+
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" value="{{ form.get('username', '') }}" autocomplete="username" required>
+        <p class="hint">Letters only. No numbers, spaces or symbols. Example: Madhushree</p>
+        <p class="error" data-error-for="username">{{ errors.get('username', '') }}</p>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" value="{{ form.get('email', '') }}" autocomplete="email" required>
+        <p class="hint">Must end with @gmail.com</p>
+        <p class="error" data-error-for="email">{{ errors.get('email', '') }}</p>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="new-password" required>
+        <ul class="rules" id="password-rules">
+          <li data-rule="length">At least 8 characters</li>
+          <li data-rule="upper">One uppercase letter</li>
+          <li data-rule="lower">One lowercase letter</li>
+          <li data-rule="number">One number</li>
+          <li data-rule="special">One special character</li>
+        </ul>
+        <p class="error" data-error-for="password">{{ errors.get('password', '') }}</p>
+      </div>
+
+      <div class="field">
+        <label for="confirm">Confirm password</label>
+        <input id="confirm" name="confirm" type="password" autocomplete="new-password" required>
+        <p class="error" data-error-for="confirm">{{ errors.get('confirm', '') }}</p>
+      </div>
+
+      {% if role == 'teacher' %}
+      <div class="field">
+        <label for="verification">Teacher verification password</label>
+        <input id="verification" name="verification" type="password" autocomplete="off" required>
+        <p class="hint">Ask your institution for the shared teacher password.</p>
+        <p class="error" data-error-for="verification">{{ errors.get('verification', '') }}</p>
+      </div>
+      {% endif %}
+
+      <button class="btn btn-primary btn-block" type="submit">Create account</button>
+    </form>
+  </section>
+</main>
+{% endblock %}

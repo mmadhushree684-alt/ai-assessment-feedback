@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="hero">
+  <section class="hero-copy">
+    <h1>Teachers write the expected answer. AI marks the rest.</h1>
+    <p class="lead">Students answer online, and AI compares each answer with the teacher's expected answer by meaning, then gives marks and clear feedback. No manual grading.</p>
+
+    <div class="entry-grid">
+      <div class="entry-card">
+        <h2>I'm a student</h2>
+        <p>Take assessments and see your marks and feedback.</p>
+        <div class="entry-actions">
+          <a class="btn btn-primary" href="{{ url_for('auth.login', role='student') }}">Log in</a>
+          <a class="btn btn-outline" href="{{ url_for('auth.register', role='student') }}">Create account</a>
+        </div>
+      </div>
+      <div class="entry-card">
+        <h2>I'm a teacher</h2>
+        <p>Build assessments and let AI evaluate submissions.</p>
+        <div class="entry-actions">
+          <a class="btn btn-primary" href="{{ url_for('auth.login', role='teacher') }}">Log in</a>
+          <a class="btn btn-outline" href="{{ url_for('auth.register', role='teacher') }}">Create account</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="hero-preview" aria-label="Example of AI feedback">
+    <div class="preview-card">
+      <p class="preview-q">Explain what makes Python a high-level language.</p>
+      <div class="preview-score"><strong>7</strong><span>/ 10</span><em>Mostly correct</em></div>
+      <div class="preview-bar"><span style="width:70%"></span></div>
+      <h3>Strengths</h3>
+      <ul>
+        <li>Correctly explained the main concept.</li>
+        <li>Included an appropriate example.</li>
+      </ul>
+      <h3>To improve</h3>
+      <ul>
+        <li>Add more explanation about the limitations.</li>
+        <li>Include the missing key point.</li>
+      </ul>
+    </div>
+  </aside>
+</main>
+{% endblock %}

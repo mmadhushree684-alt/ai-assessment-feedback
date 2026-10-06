@@ -1,0 +1,5 @@
+{% if role == 'teacher' %}
+  {% include 'teacher/dashboard.html' %}
+{% else %}
+  {% include 'student/dashboard.html' %}
+{% endif %}
